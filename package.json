@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "name": "assessment",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "dev:todo-app": "yarn workspace todo-app dev",
+    "build:todo-app": "yarn workspace todo-app build",
+    "start:todo-app": "yarn workspace todo-app start"
+  }
+}

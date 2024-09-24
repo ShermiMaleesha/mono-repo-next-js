@@ -1,0 +1,388 @@
+import { Meta, Story } from '@storybook/addon-docs'
+import { ArticleIcon, Link } from 'silver-ui'
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableCollapsibleRow,
+  TableContainer,
+  TableFooter,
+  TableHead,
+  TableRow,
+} from './index'
+
+<Meta title='Base/Table' />
+
+export function createData(date, type, amount, status) {
+  return { date, type, amount, status }
+}
+
+export function createSecondaryData(
+  date,
+  underlying,
+  buySell,
+  price,
+  units,
+  amount
+) {
+  return { date, underlying, buySell, price, units, amount }
+}
+
+export const rows = [
+  createData(
+    '16 Jul 2023',
+    { name: 'Investment', goalName: 'My Goal', account: 'USD Cash' },
+    'US$1,000',
+    'Completed'
+  ),
+  createData(
+    '12 Jun 2023',
+    { name: 'Investment', goalName: 'My Goal', account: 'USD Cash' },
+    'US$1,000',
+    'Completed'
+  ),
+  createData(
+    '10 Jun 2023',
+    { name: 'Investment', goalName: 'My Goal', account: 'USD Cash' },
+    'US$1,000',
+    'Completed'
+  ),
+  createData(
+    '12 Dec 2022',
+    { name: 'Investment', goalName: 'My Goal', account: 'USD Cash' },
+    'US$1,000',
+    'Completed'
+  ),
+  createData(
+    '03 Oct 2022',
+    { name: 'Investment', goalName: 'My Goal', account: 'USD Cash' },
+    'US$1,000',
+    'Completed'
+  ),
+]
+
+export const secondaryRows = [
+  createSecondaryData(
+    '12 Jul 2023',
+    'Schroder Global Emerging Markets Opportunities Fund',
+    'Sell',
+    'US$1.0030',
+    62.35,
+    'US$6.36'
+  ),
+  createSecondaryData(
+    '13 Jul 2023',
+    'Schroder Global Emerging Markets Opportunities Fund',
+    'Sell',
+    'US$1.0040',
+    204.12,
+    'US$17.36'
+  ),
+  createSecondaryData(
+    '16 Jul 2023',
+    'Schroder Global Emerging Markets Opportunities Fund',
+    'Sell',
+    'US$1.0056',
+    19.01,
+    'US$7.36'
+  ),
+]
+
+# Table
+
+export const Template = ({ tableVariant, align }) => (
+  <div className='md:max-w-[30vw]'>
+    <span className='heading-l-auto text-default'>{tableVariant} table</span>
+    <TableContainer tableVariant={tableVariant}>
+      <Table aria-label='simple table'>
+        <TableHead>
+          <TableRow align={align}>
+            <TableCell>Date</TableCell>
+            <TableCell>Type</TableCell>
+            <TableCell>Amount</TableCell>
+            <TableCell>Status</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {rows.map(({ date, type, amount, status }, index) => {
+            return (
+              <TableRow
+                key={date}
+                align={align}
+                last={index === rows.length - 1}
+              >
+                <TableCell>{date}</TableCell>
+                <TableCell>{type.name}</TableCell>
+                <TableCell>{amount}</TableCell>
+                <TableCell>{status}</TableCell>
+              </TableRow>
+            )
+          })}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  </div>
+)
+
+## Basic usage
+
+Some custom behaviours (overridable):
+
+- if `autoAlign` is set on `<TableRow />`, alignment is set such that TableCells on the left side will have `align='left'`, and TableCells on the right have `align='right'`
+- Most styling is done at `<TableCell />` level.
+- `TableHead` will pass prop `variant='head'` to grandchildren `TableCell` (i.e. TableHead > TableRow > TableCell)
+- `TableBody` will pass prop `variant='body'` to grandchildren `TableCell` (i.e. TableHead > TableRow > TableCell)
+
+### Basic Usage
+
+<Story
+  name='1. Basic usage'
+  argTypes={{
+    tableVariant: {
+      control: {
+        type: 'select',
+      },
+      options: ['primary', 'secondary'],
+      defaultValue: 'primary',
+    },
+    align: {
+      control: {
+        type: 'select',
+      },
+      options: ['inherit', 'left', 'center', 'right', 'justify', 'auto'],
+      defaultValue: 'auto',
+    },
+  }}
+>
+  {Template.bind({})}
+</Story>
+
+<br />
+
+### Secondary Variant
+
+To be used for L2 data in a TableCollapsibleRow
+
+<Story name='2. Secondary variant'>
+  <div className='flex flex-col gap-y-32'>
+    <TableContainer tableVariant='secondary'>
+      <Table aria-label='simple table'>
+        <TableHead>
+          <TableRow align='auto'>
+            <TableCell>Date</TableCell>
+            <TableCell>Underlying</TableCell>
+            <TableCell>Buy / Sell</TableCell>
+            <TableCell>Price</TableCell>
+            <TableCell>Units</TableCell>
+            <TableCell>Amount</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {secondaryRows.map(
+            ({ date, underlying, buySell, price, units, amount }) => (
+              <TableRow key={date} align='auto'>
+                <TableCell>{date}</TableCell>
+                <TableCell>{underlying}</TableCell>
+                <TableCell>{buySell}</TableCell>
+                <TableCell>{price}</TableCell>
+                <TableCell>{units}</TableCell>
+                <TableCell>{amount}</TableCell>
+              </TableRow>
+            )
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
+    <TableContainer tableVariant='secondary' className='max-w-500'>
+      <Table aria-label='simple table'>
+        <TableHead>
+          <TableRow>
+            <TableCell>Funding source</TableCell>
+            <TableCell align='left'>Available amount</TableCell>
+            <TableCell align='left'>Recurring transactions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow>
+            <TableCell>USD Cash</TableCell>
+            <TableCell className='flex flex-col' align='left'>
+              <span className='body-s-auto text-default'>US$0.00</span>
+              <span className='body-s-auto text-dim'>HK$0.00</span>
+            </TableCell>
+            <TableCell align='left'>
+              <Link>Set up</Link>
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </TableContainer>
+  </div>
+</Story>
+
+## Usage with Collapsible Rows
+
+<Story name='3. Collapsible Rows'>
+  <div className='md:max-w-[50vw]'>
+    <TableContainer tableVariant='primary'>
+      <Table aria-label='simple table'>
+        <TableHead>
+          <TableRow align='auto'>
+            <TableCell sx={{ width: '20%' }}>Date</TableCell>
+            <TableCell sx={{ width: '40%' }}>Type</TableCell>
+            <TableCell sx={{ width: '20%' }}>Amount</TableCell>
+            <TableCell sx={{ width: '15%' }}>Status</TableCell>
+            <TableCell sx={{ width: '5%' }} />
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {rows.map(({ date, type, amount, status }, index) => (
+            <TableCollapsibleRow
+              key={date}
+              align='auto'
+              last={index === rows.length - 1}
+              collapseContent={
+                <div className='px-16 py-0'>
+                  <TableContainer tableVariant='secondary'>
+                    <Table aria-label='simple table'>
+                      <TableHead>
+                        <TableRow align='auto'>
+                          <TableCell>Date</TableCell>
+                          <TableCell>Underlying</TableCell>
+                          <TableCell>Buy / Sell</TableCell>
+                          <TableCell>Price</TableCell>
+                          <TableCell>Units</TableCell>
+                          <TableCell>Amount</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {secondaryRows.map(
+                          ({
+                            date,
+                            underlying,
+                            buySell,
+                            price,
+                            units,
+                            amount,
+                          }) => (
+                            <TableRow key={date} align='auto'>
+                              <TableCell>{date}</TableCell>
+                              <TableCell>{underlying}</TableCell>
+                              <TableCell>{buySell}</TableCell>
+                              <TableCell>{price}</TableCell>
+                              <TableCell>{units}</TableCell>
+                              <TableCell>{amount}</TableCell>
+                            </TableRow>
+                          )
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </div>
+              }
+            >
+              <TableCell>{date}</TableCell>
+              <TableCell className='flex flex-col'>
+                <span className='body-s-auto text-default'>{type.name}</span>
+                <span className='body-xs-auto text-dim'>{type.goalName}</span>
+                <span className='body-xs-auto text-dim'>{type.account}</span>
+              </TableCell>
+              <TableCell>{amount}</TableCell>
+              <TableCell>{status}</TableCell>
+            </TableCollapsibleRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  </div>
+</Story>
+
+## With footer
+
+Footer implementation is left as an exercise to the reader (as a composition of TableRow and TableCell).
+
+<Story name='4. With footer'>
+  <div className='md:max-w-[50vw]'>
+    <TableContainer tableVariant='secondary'>
+      <Table aria-label='simple table'>
+        <TableHead>
+          <TableRow align='auto'>
+            <TableCell>Date</TableCell>
+            <TableCell>Underlying</TableCell>
+            <TableCell>Buy / Sell</TableCell>
+            <TableCell>Price</TableCell>
+            <TableCell>Units</TableCell>
+            <TableCell>Amount</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {secondaryRows.map(
+            ({ date, underlying, buySell, price, units, amount }) => (
+              <TableRow key={date} align='auto'>
+                <TableCell>{date}</TableCell>
+                <TableCell>{underlying}</TableCell>
+                <TableCell>{buySell}</TableCell>
+                <TableCell>{price}</TableCell>
+                <TableCell>{units}</TableCell>
+                <TableCell>{amount}</TableCell>
+              </TableRow>
+            )
+          )}
+        </TableBody>
+        <TableFooter>
+          <TableRow align='auto'>
+            <TableCell variant='body' colSpan={12} align='left'>
+              <div className='body-xs-auto flex flex-row items-start gap-x-4 text-dim'>
+                <ArticleIcon fontSize='inherit' />A rebalance transaction is
+                comprised of a redemption from securities that are overweight
+                followed by an investment in securities that are underweight.
+                The optimised investment amount will be generated after the
+                redemption is complete.
+              </div>
+            </TableCell>
+          </TableRow>
+        </TableFooter>
+      </Table>
+    </TableContainer>
+  </div>
+</Story>
+
+## Without header
+
+<Story name='5. Without header'>
+  <div className='md:max-w-[50vw]'>
+    <TableContainer tableVariant='secondary'>
+      <Table aria-label='simple table'>
+        <TableBody>
+          <TableRow align='auto'>
+            <TableCell sx={{ width: '20%' }} />
+            <TableCell>Underlying fund</TableCell>
+            <TableCell>Eastspring Singapore Select Bond Fund</TableCell>
+            <TableCell sx={{ width: '20%' }} />
+          </TableRow>
+          <TableRow align='auto'>
+            <TableCell />
+            <TableCell>Estimated percentage cashback per year</TableCell>
+            <TableCell>0.25%</TableCell>
+            <TableCell />
+          </TableRow>
+          <TableRow align='auto'>
+            <TableCell />
+            <TableCell>Holding period applicable</TableCell>
+            <TableCell>01 Jan 2022 to 31 Mar 2022</TableCell>
+            <TableCell />
+          </TableRow>
+          <TableRow align='auto'>
+            <TableCell />
+            <TableCell>Weighted average holding in period</TableCell>
+            <TableCell className='flex flex-col'>
+              <span>US$2,000</span>
+              <span className='text-dim'>HK$5,000</span>
+            </TableCell>
+            <TableCell />
+          </TableRow>
+        </TableBody>
+      </Table>
+    </TableContainer>
+  </div>
+</Story>
